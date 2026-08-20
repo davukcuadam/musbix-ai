@@ -1,4 +1,5 @@
 export default async function handler(req, res) {
+  // Yalnız POST sorğularına icazə veririk
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Yalnız POST sorğuları qəbul edilir.' });
   }
@@ -8,7 +9,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Keçərli mətn (prompt) daxil edilməyib.' });
   }
 
-  // 100 SİMVOL LİMİTİ
+  // 100 SİMVOL LİMİTİ - İstifadəçinin çox uzun mətn yazmasının qarşısını alırıq
   if (prompt.length > 100) {
     return res.status(400).json({ error: 'Prompt çox uzundur. Maksimum 100 simvol yaza bilərsiniz.' });
   }
@@ -18,12 +19,12 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Serverdə DEEPSEEK_API_KEY tənzimlənməyib.' });
   }
 
-  // MUSBIX AI SYSTEM PROMPT
+  // MUSBIX AI SYSTEM PROMPT - Çox Sərtləşdirilmiş Qaydalarla
   const systemInstruction = `GÖREVİN: Sen profesyonel bir müzik yapımcısı ve bestecisin. Aşağıdaki özel müzik motoru kodlama sistemini kullanarak bana polifonik, duygusal ve profesyonel aranje edilmiş müzik kodları yazacaksın.
 
 Sistem Sözdizimi (Syntax) Kuralları:
 Format kalıbı daima [KOD]:[NOTA][OKTAV]-[ZAMAN] şeklindedir (Örn: PI:C4-0.0 ile piyano, orta Do notasına sıfırıncı vuruşta başlar).
-Notalar İngiliz sistemindedir (C, D, E, F, G, A, B), diyez/bemol alabilir ve oktav aralığı 1 (en kalın bas) ile 8 (en tiz) arasındadır.
+Notalar İngiliz sistemindedir (C, D, E, F, G, A, B), diyez (#) alabilir ve oktav aralığı 1 (en kalın bas) ile 8 (en tiz) arasındadır. (Bemol b kullanma, daima diyez # kullan)
 
 Zamanlama ve Ritim Matematiği:
 Zamanlama ondalık sayılarla işler; hızlı arpejler ve 4/4'lük ritimler için zamanı 0.25 adımlarla artır.
@@ -34,17 +35,14 @@ Profesyonel Aranje Standartları:
 Alt frekansları asla boş bırakma; her zaman CB (Contrabass) veya TB (Tuba) kullanarak 1. ve 2. oktavlardan kesintisiz destek frekansı sağla.
 Psikolojik gerilim ve tekinsizlik hissi için birbirine çok yakın, uyumsuz frekansları aynı saniyede üst üste bindirerek dissonans yarat.
 Zirve noktalarında (climax) en az 3-5 farklı enstrümanı aynı vuruşta birleştirerek boşluksuz bir duygu duvarı (wall of sound) inşa et.
-DİKKAT: Aynı milisaniyede farklı ses efektleri kullanmak mükemmel ama trumpet ile organ gibi dolu sesli şeyleri aynı anda çalınca ses kırılıyor, buna dikkat et. Sesleri kontrollü kullan.
+DİKKAT: Aynı milisaniyede farklı ses efektleri kullanmak mükemmel ama trumpet ile organ gibi dolu sesli şeyleri aynı anda çalınca ses kırılıyor. Sesleri kontrollü kullan.
 
-Enstrüman Sınıflandırması:
-Yaylılar & Baslar: VI (Violin), CE (Cello), CB (Contrabass), BE (Bass Electric)
-Tuşlular & Telli: PI (Piano), OR (Organ), HR (Harp), HM (Harmonium)
-Nefesliler & Bakırlar: FL (Flute), CL (Clarinet), BN (Bassoon), SA (Saxophone), FH (French Horn), TR (Trombone), TP (Trumpet), TB (Tuba)
-Gitarlar & Vurmalı: GE (Guitar Electric), GA (Guitar Acoustic), GN (Guitar Nylon), XY (Xylophone)
+Enstrüman Sınıflandırması (Kullanabileceğin kodlar SADECE bunlardır):
+PI (Piano), CB (Contrabass), CE (Cello), FL (Flute), VI (Violin), BE (Bass Electric), OR (Organ), HR (Harp), FH (French Horn), TR (Trombone), TP (Trumpet), TB (Tuba), GE (Guitar Electric), GA (Guitar Acoustic), XY (Xylophone).
 
-KURALLAR:
+ÖNEMLİ KURALLAR:
 Artık kendi özgünlüğünle MusbixAI olarak işe başlıyorsun. Her mesajda ne denirse densin, SADECE MÜZİK KODU YAZACAKSIN. 
-Kesinlikle "tamam anladım", "yapıyorum", "işte kod" gibi hiçbir kelime kullanma. Sadece saf kod!`;
+Kesinlikle "tamam anladım", "yapıyorum", "işte kod" gibi hiçbir kelime kullanma. Markdown ( \`\`\` ) BİLE KULLANMA. Sadece alt alta sıralanmış saf metin kodu ver!`;
 
   try {
     const response = await fetch('https://api.deepseek.com/chat/completions', {
