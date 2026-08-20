@@ -2,296 +2,177 @@
 <html lang="az">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Musbix AI - Generativ Musiqi Studiyası</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Musbix AI - Süni İntellektlə Musiqi</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
-
   <style>
-    :root {
-      --bg-dark: #080312; --accent-purple: #8b5cf6; --accent-glow: #c084fc;
-      --accent-cyan: #38bdf8; --panel-bg: rgba(18, 10, 32, 0.75);
-      --text-main: #f8fafc; --text-sub: #a78bfa; --border-color: rgba(167, 139, 250, 0.15);
-      --gold: #fbbf24;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-    html, body { width: 100vw; min-height: 100vh; background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; }
-
-    #particle-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; }
-    .app-layout { position: relative; z-index: 2; width: 100%; min-height: 100vh; display: flex; }
-    
-    .hero-section { flex: 1; padding: 60px 80px; display: flex; flex-direction: column; justify-content: space-between; pointer-events: none; }
-    .hero-section * { pointer-events: auto; }
-    .brand-title { font-size: 42px; font-weight: 800; letter-spacing: -1px; background: linear-gradient(135deg, #ffffff 0%, #c084fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; }
-    .brand-subtitle { color: var(--text-sub); font-size: 16px; max-width: 480px; line-height: 1.6; }
-    
-    .attribution-container { background: rgba(15, 7, 28, 0.5); backdrop-filter: blur(12px); border: 1px solid var(--border-color); padding: 20px 24px; border-radius: 16px; max-width: 520px; }
-    .attribution-title { font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent-cyan); font-weight: 700; margin-bottom: 10px; }
-    .tags-wrapper { display: flex; flex-wrap: wrap; gap: 8px; }
-    .tag { font-size: 12px; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(192, 132, 252, 0.3); color: #e9d5ff; padding: 5px 12px; border-radius: 20px; font-weight: 500; }
-
-    .control-panel { position: relative; width: 480px; background: var(--panel-bg); backdrop-filter: blur(24px); border-left: 1px solid var(--border-color); clip-path: polygon(12% 0, 100% 0, 100% 100%, 0% 100%); padding: 80px 50px 60px 90px; display: flex; flex-direction: column; justify-content: center; box-shadow: -20px 0 50px rgba(0, 0, 0, 0.6); }
-    
-    .lang-selector { position: absolute; top: 24px; right: 32px; z-index: 50; }
-    .lang-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white; padding: 8px 14px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; backdrop-filter: blur(10px); transition: all 0.2s; }
-    .lang-btn:hover { background: rgba(255, 255, 255, 0.15); }
-    .lang-menu { position: absolute; top: 100%; right: 0; margin-top: 8px; background: rgba(18, 10, 32, 0.95); backdrop-filter: blur(20px); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; display: none; flex-direction: column; min-width: 150px; }
-    .lang-menu.show { display: flex; }
-    .lang-option { padding: 12px 16px; cursor: pointer; display: flex; align-items: center; gap: 10px; color: white; font-size: 14px; transition: background 0.2s; }
-    .lang-option:hover { background: rgba(139, 92, 246, 0.4); }
-
-    .logo-header { display: flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 32px; }
-    .logo-header span { color: var(--accent-glow); }
-    .auth-card h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
-    .auth-card p { color: var(--text-sub); font-size: 14px; margin-bottom: 28px; line-height: 1.5; }
-
-    .btn { width: 100%; padding: 16px; border-radius: 12px; border: none; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-    .btn-google { background: #ffffff; color: #0f172a; }
-    .btn-google:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(255, 255, 255, 0.25); }
-    .btn-primary { background: linear-gradient(135deg, var(--accent-purple), #6d28d9); color: #ffffff; }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(139, 92, 246, 0.6); }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-    .workspace-card { display: flex; flex-direction: column; gap: 20px; }
-    .token-badge { display: flex; justify-content: space-between; align-items: center; background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.25); padding: 12px 18px; border-radius: 12px; color: var(--gold); font-weight: 600; font-size: 14px; }
-    textarea { width: 100%; height: 120px; background: rgba(8, 3, 18, 0.8); border: 1px solid var(--border-color); border-radius: 12px; color: #fff; padding: 14px; font-size: 14px; resize: none; outline: none; }
-    textarea:focus { border-color: var(--accent-glow); }
-    
-    .player-box { background: rgba(8, 3, 18, 0.8); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
-    .play-circle { width: 48px; height: 48px; border-radius: 50%; background: #ffffff; color: #000000; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
-    .play-circle:hover { transform: scale(1.08); }
-    .play-circle:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
-    .hidden { display: none !important; }
-
-    @media (max-width: 900px) {
-      .app-layout { flex-direction: column; }
-      .hero-section { min-height: auto; padding: 50px 24px; }
-      .control-panel { width: 100%; min-height: auto; clip-path: none; padding: 60px 24px; border-left: none; border-top: 1px solid var(--border-color); }
-      .brand-title { font-size: 32px; }
-    }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f0f13; color: white; text-align: center; margin: 0; padding: 50px 20px; }
+    h1 { font-size: 2.5em; color: #00e5ff; margin-bottom: 10px; }
+    .container { max-width: 600px; margin: 0 auto; background: #1a1a24; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,229,255,0.1); }
+    textarea { width: 100%; height: 80px; background: #0f0f13; color: white; border: 1px solid #333; padding: 15px; border-radius: 8px; margin-bottom: 15px; resize: none; font-size: 1em; box-sizing: border-box; }
+    button { background: #00e5ff; color: #0f0f13; border: none; padding: 15px 30px; font-size: 1.1em; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; margin: 5px; }
+    button:hover { background: #00b3cc; transform: translateY(-2px); }
+    button:disabled { background: #333; color: #888; cursor: not-allowed; transform: none; }
+    .token-box { background: #2a2a35; display: inline-block; padding: 10px 20px; border-radius: 20px; color: #00e5ff; font-weight: bold; margin-bottom: 20px; }
+    .hidden { display: none; }
+    #status { margin-top: 15px; font-size: 0.9em; color: #aaa; }
   </style>
 </head>
 <body>
 
-  <canvas id="particle-canvas"></canvas>
-
-  <main class="app-layout">
-    <section class="hero-section">
-      <div>
-        <h1 class="brand-title" data-i18n="heroTitle">Generativ Musiqi Studiyası</h1>
-        <p class="brand-subtitle" data-i18n="heroSub">Mətn təsvirlərinizdən real vaxt polifonik səs ardıcıllığı və süni intellekt dəstəkli web-audio sintezi yaradın.</p>
-      </div>
-      <footer class="attribution-container">
-        <div class="attribution-title" data-i18n="techTitle">Texnologiya & İnfrastruktur Lisenziyaları</div>
-        <div class="tags-wrapper">
-          <span class="tag">🎵 Tone.js WebAudio Framework</span>
-          <span class="tag">🤖 DeepSeek AI API Engine</span>
-          <span class="tag">⚡ Musbix Engine v2.0</span>
-        </div>
-      </footer>
-    </section>
-
-    <section class="control-panel">
-      <div class="lang-selector">
-        <button class="lang-btn" id="lang-btn">
-          <span id="current-flag">🇦🇿</span> <span id="current-lang">AZ</span> <span style="font-size:10px;">▼</span>
-        </button>
-        <div class="lang-menu" id="lang-menu">
-          <div class="lang-option" data-lang="az">🇦🇿 Azərbaycan</div>
-          <div class="lang-option" data-lang="tr">🇹🇷 Türkçe</div>
-          <div class="lang-option" data-lang="en">🇬🇧 English</div>
-          <div class="lang-option" data-lang="ru">🇷🇺 Русский</div>
-        </div>
-      </div>
-      
-      <div class="logo-header">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-        Musbix<span>AI</span>
-      </div>
-
-      <div id="login-card" class="auth-card">
-        <h2 data-i18n="welcomeTitle">Studiyaya Xoş Gəlmisiniz</h2>
-        <p data-i18n="welcomeSub">Qabaqcıl səs mühərriki ilə musiqi yaratmaq üçün Google hesabınızla daxil olun.</p>
-        <button id="login-btn" class="btn btn-google">
-          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-          <span data-i18n="googleLogin">Google ilə Daxil Ol</span>
-        </button>
-      </div>
-
-      <div id="workspace-card" class="workspace-card hidden">
-        <div class="token-badge">
-          <span data-i18n="balanceText">Mövcud Balans</span>
-          <span id="jeton-numara">200 Jeton</span>
-        </div>
-        <textarea id="prompt-input" data-i18n-placeholder="promptPlaceholder" placeholder="Musiqi xəyalını yaz... (Məs: Ambient tərzdə, dincəldici, yavaş piano...)"></textarea>
-        <button id="generate-btn" class="btn btn-primary" data-i18n="generateBtn">Musiqini Sintez Et</button>
-        <div class="player-box">
-          <div>
-            <div id="track-title" style="font-weight: 700; font-size: 15px;" data-i18n="waitTitle">Bəstə Gözlənilir</div>
-            <div id="player-status" style="font-size: 13px; color: var(--text-sub);" data-i18n="waitStatus">Hələ yaradılmayıb</div>
-          </div>
-          <button id="play-btn" class="play-circle" disabled>
-            <svg id="icon-play" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
-            <svg id="icon-pause" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" class="hidden"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
-          </button>
-        </div>
-      </div>
-    </section>
-  </main>
+  <div class="container">
+    <h1>Musbix AI</h1>
+    <div class="token-box" id="jeton-display">300 Jeton</div>
+    
+    <!-- İstifadəçi maksimum 100 simvol yaza bilər -->
+    <textarea id="prompt-input" maxlength="100" placeholder="Musiqi tərzini təsvir et (Maksimum 100 simvol)..."></textarea>
+    
+    <button id="generate-btn">Musiqini Sintez Et</button>
+    <div id="status">Sizi gözləyir...</div>
+    
+    <div style="margin-top: 30px;">
+      <h3 id="track-title" style="color: #fff; margin-bottom: 15px;"></h3>
+      <button id="play-btn" class="hidden">▶ Dinlə</button>
+      <button id="download-btn" class="hidden">⬇ Yüklə</button>
+    </div>
+  </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-    // 1. DİL DƏYİŞDİRMƏ SİSTEMİ
-    const translations = {
-      az: { heroTitle: "Generativ Musiqi Studiyası", heroSub: "Mətn təsvirlərinizdən real vaxt polifonik səs ardıcıllığı və süni intellekt dəstəkli web-audio sintezi yaradın.", techTitle: "Texnologiya & İnfrastruktur", welcomeTitle: "Studiyaya Xoş Gəlmisiniz", welcomeSub: "Qabaqcıl səs mühərriki ilə musiqi yaratmaq üçün Google hesabınızla daxil olun.", googleLogin: "Google ilə Daxil Ol", balanceText: "Mövcud Balans", promptPlaceholder: "Musiqi xəyalını yaz... (Məs: Ambient, dincəldici, yavaş piano...)", generateBtn: "Musiqini Sintez Et", generatingBtn: "DeepSeek AI Hesablayır...", waitTitle: "Bəstə Gözlənilir", waitStatus: "Hələ yaradılmayıb", readyStatus: "Dinləməyə Hazırdır", playingStatus: "Oynadılır...", stoppedStatus: "Dayandırıldı" },
-      tr: { heroTitle: "Üretken Müzik Stüdyosu", heroSub: "Metin tariflerinizden gerçek zamanlı polifonik ses dizilimi ve AI destekli web-audio sentezi oluşturun.", techTitle: "Teknoloji & Altyapı", welcomeTitle: "Stüdyoya Hoş Geldiniz", welcomeSub: "Ses motoruyla müzik üretmek için Google hesabınızla oturum açın.", googleLogin: "Google ile Giriş Yap", balanceText: "Kullanılabilir Bakiye", promptPlaceholder: "Müzik hayalini yaz... (Örn: Ambient, dinlendirici, piyano...)", generateBtn: "Müziği Sentezle", generatingBtn: "DeepSeek AI İşliyor...", waitTitle: "Beste Bekleniyor", waitStatus: "Henüz üretilmedi", readyStatus: "Dinlemeye Hazır", playingStatus: "Oynatılıyor...", stoppedStatus: "Durduruldu" },
-      en: { heroTitle: "Generative Music Studio", heroSub: "Create real-time polyphonic sound sequences and AI-powered web-audio synthesis from text.", techTitle: "Technology & Infrastructure", welcomeTitle: "Welcome to the Studio", welcomeSub: "Sign in with your Google account to create music.", googleLogin: "Sign in with Google", balanceText: "Available Balance", promptPlaceholder: "Describe your music... (e.g. Ambient, relaxing piano...)", generateBtn: "Synthesize Music", generatingBtn: "DeepSeek AI Generating...", waitTitle: "Awaiting Composition", waitStatus: "Not generated yet", readyStatus: "Ready to Listen", playingStatus: "Playing...", stoppedStatus: "Stopped" },
-      ru: { heroTitle: "Генеративная Музыка", heroSub: "Создавайте полифонические звуковые последовательности в реальном времени из текста.", techTitle: "Технологии и Инфраструктура", welcomeTitle: "Добро пожаловать", welcomeSub: "Войдите с помощью Google, чтобы создавать музыку.", googleLogin: "Войти через Google", balanceText: "Баланс", promptPlaceholder: "Опишите вашу музыку... (напр. Эмбиент, пианино...)", generateBtn: "Синтезировать", generatingBtn: "DeepSeek AI Генерирует...", waitTitle: "Ожидание", waitStatus: "Еще не создано", readyStatus: "Готово", playingStatus: "Играет...", stoppedStatus: "Остановлено" }
+    const els = {
+      pInp: document.getElementById("prompt-input"),
+      gBtn: document.getElementById("generate-btn"),
+      pBtn: document.getElementById("play-btn"),
+      dBtn: document.getElementById("download-btn"),
+      jNum: document.getElementById("jeton-display"),
+      pStat: document.getElementById("status"),
+      tTit: document.getElementById("track-title")
     };
 
-    let currentLang = 'az';
-    const langBtn = document.getElementById('lang-btn'), langMenu = document.getElementById('lang-menu');
-    langBtn.addEventListener('click', (e) => { e.stopPropagation(); langMenu.classList.toggle('show'); });
-    document.addEventListener('click', () => langMenu.classList.remove('show'));
-    
-    document.querySelectorAll('.lang-option').forEach(opt => {
-      opt.addEventListener('click', (e) => {
-        const target = e.currentTarget;
-        currentLang = target.getAttribute('data-lang');
-        document.getElementById('current-flag').innerText = target.innerText.trim().split(' ')[0];
-        document.getElementById('current-lang').innerText = currentLang.toUpperCase();
-        
-        const t = translations[currentLang];
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-          if (t[el.getAttribute('data-i18n')]) el.innerText = t[el.getAttribute('data-i18n')];
-        });
-        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-          if (t[el.getAttribute('data-i18n-placeholder')]) el.setAttribute('placeholder', t[el.getAttribute('data-i18n-placeholder')]);
-        });
-      });
-    });
+    let currentJeton = 300;
+    let recorder;
+    let audioUrl = null;
 
-    // 2. 3D PARTİKL EFEKTİ
-    const canvas = document.getElementById('particle-canvas'), ctx = canvas.getContext('2d');
-    let width, height, particles = [];
-    const focalLength = 300;
-
-    function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
-    window.addEventListener('resize', resize); resize();
-
-    class Particle {
-      constructor() { this.reset(); this.z = Math.random() * 1500; }
-      reset() { this.x = (Math.random() - 0.5) * (width * 1.5); this.y = (Math.random() - 0.5) * (height * 1.5); this.z = 1500; this.r = Math.random() * 3 + 1; this.sz = Math.random() * 2 + 1; this.c = Math.random() > 0.5 ? '192, 132, 252' : '139, 92, 246'; }
-      update() { this.z -= this.sz; if (this.z <= 0) this.reset(); }
-      draw() {
-        let scale = focalLength / (focalLength + this.z), px = (this.x * scale) + (width / 2), py = (this.y * scale) + (height / 2), pr = this.r * scale * 2, op = (1 - (this.z / 1500)) * 0.8;
-        ctx.beginPath();
-        let g = ctx.createRadialGradient(px, py, 0, px, py, pr * 2);
-        g.addColorStop(0, `rgba(${this.c}, ${op})`); g.addColorStop(1, `rgba(${this.c}, 0)`);
-        ctx.fillStyle = g; ctx.arc(px, py, Math.max(0, pr * 2), 0, Math.PI * 2); ctx.fill();
-      }
-    }
-    for (let i = 0; i < 150; i++) particles.push(new Particle());
-    function anim() { ctx.clearRect(0, 0, width, height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(anim); }
-    anim();
-
-    // 3. FİREBASE VƏ GERÇƏK GOOGLE GİRİŞİ
-    const firebaseConfig = {
-      apiKey: "AIzaSyBvgOnM3S8_6Of-VKnkhEI_UQ1UsVvjxRw",
-      authDomain: "musbix-ai.firebaseapp.com",
-      projectId: "musbix-ai",
-      storageBucket: "musbix-ai.firebasestorage.app",
-      messagingSenderId: "180090460627",
-      appId: "1:180090460627:web:2a996f4cd90cceac377726"
+    // BURANI PYTHON SKRİPTİNİN VERDİYİ KODLA ƏVƏZ EDƏ BİLƏRSƏN
+    const baseNotes = {
+      "PI": "A5", "CB": "A5", "CE": "A5", "FL": "A5", "VI": "A5", 
+      "BE": "A5", "OR": "A5", "HR": "A5", "FH": "A5", "TR": "A5",
+      "TP": "A5", "TB": "A5", "GE": "A5", "GA": "A5", "XY": "A5"
     };
 
-    const app = initializeApp(firebaseConfig), auth = getAuth(app), provider = new GoogleAuthProvider();
-    let currentJeton = 200, synth, sequence, isPlaying = false;
-    const els = { lCard: document.getElementById("login-card"), wCard: document.getElementById("workspace-card"), jNum: document.getElementById("jeton-numara"), lBtn: document.getElementById("login-btn"), gBtn: document.getElementById("generate-btn"), pBtn: document.getElementById("play-btn"), pInp: document.getElementById("prompt-input"), tTit: document.getElementById("track-title"), pStat: document.getElementById("player-status"), iPlay: document.getElementById("icon-play"), iPause: document.getElementById("icon-pause") };
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) { els.lCard.classList.add("hidden"); els.wCard.classList.remove("hidden"); els.jNum.innerText = `${currentJeton} Jeton`; }
-    });
-
-    els.lBtn.addEventListener("click", async () => {
-      try {
-        await signInWithPopup(auth, provider);
-        els.lCard.classList.add("hidden"); els.wCard.classList.remove("hidden"); els.jNum.innerText = `${currentJeton} Jeton`;
-      } catch (err) {
-        alert("Giriş xətası: " + err.message);
-      }
-    });
-
-    // 4. VERCEL SERVERLESS BACKEND MÜRACİƏTİ (DEEPSEEK AI INTEGRATION)
     els.gBtn.addEventListener("click", async () => {
       const userPrompt = els.pInp.value.trim();
       if (!userPrompt) return alert("Zəhmət olmasa bir təsvir daxil edin.");
       
-      if (currentJeton < 10) return alert("Kifayət qədər jetonunuz yoxdur.");
-
-      const t = translations[currentLang];
-      els.gBtn.disabled = true; 
-      els.gBtn.innerText = t.generatingBtn;
+      els.gBtn.disabled = true; els.gBtn.innerText = "Sintez Edilir...";
+      els.pBtn.classList.add("hidden"); els.dBtn.classList.add("hidden");
+      els.pStat.innerText = "Musbix Mühərriki kodu yazır...";
 
       try {
-        // Vercel Serverless Function-a POST sorğusu
         const res = await fetch('/api/generate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: 'POST', 
+          headers: { 'Content-Type': 'application/json' }, 
           body: JSON.stringify({ prompt: userPrompt })
         });
-
         const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Server xətası baş verdi");
 
-        if (!res.ok) {
-          throw new Error(data.error || "Server xətası baş verdi");
+        const musbixCode = data.result;
+
+        // YENİ JETON HESABLAMASI: Hər 100 simvola 10 jeton
+        let charCount = musbixCode.length;
+        let tokenCost = Math.ceil(charCount / 100) * 10;
+        if (currentJeton < tokenCost) {
+          throw new Error(`Kifayət qədər jetonunuz yoxdur. Bu musiqi üçün ${tokenCost} jeton lazımdır.`);
         }
-
-        // DeepSeek AI-dan gələn not ardıcıllığı
-        let notesList = ["C4", "E4", "G4", "B4"]; // Varsayılan notlar
-        try {
-          const parsed = JSON.parse(data.result);
-          if (parsed.notes && Array.isArray(parsed.notes)) notesList = parsed.notes;
-        } catch(e) {
-          console.warn("AI cavabı tam JSON olmadı, standart notlar çalınacaq.");
-        }
-
-        if(!synth) synth = new Tone.PolySynth(Tone.Synth).toDestination();
-        
-        currentJeton = Math.max(0, currentJeton - 10); 
+        currentJeton = Math.max(0, currentJeton - tokenCost); 
         els.jNum.innerText = `${currentJeton} Jeton`;
-        
-        els.tTit.innerText = "Musbix DeepSeek Audio"; 
-        els.pStat.innerText = t.readyStatus;
-        els.pBtn.disabled = false;
 
-        if (sequence) sequence.dispose();
-        sequence = new Tone.Sequence((time, note) => { 
-          synth.triggerAttackRelease(note, "8n", time); 
-        }, notesList, "4n");
+        // PARSER MÜHƏRRİKİ
+        const lines = musbixCode.split('\n');
+        const playData = [];
+        const usedInstruments = new Set();
+
+        lines.forEach(line => {
+          line = line.trim();
+          if (!line || line.startsWith('//')) return; 
+
+          const match = line.match(/^([A-Z]{2}):([A-Za-z0-9#b]+)-([0-9.]+)$/);
+          if (match) {
+            const [, inst, note, time] = match;
+            playData.push({ inst, note, time: parseFloat(time) });
+            usedInstruments.add(inst);
+          }
+        });
+
+        if (playData.length === 0) throw new Error("AI düzgün formatda kod qaytarmadı.");
+
+        els.pStat.innerText = "Ağıllı alət yüklənməsi aparılır...";
+
+        // Yalnız istifadə olunan səs fayllarını Vercel-dən çəkirik
+        const samplers = {};
+        const loadPromises = Array.from(usedInstruments).map(instCode => {
+          return new Promise((resolve) => {
+            const baseNote = baseNotes[instCode] || "A5"; // Python siyahısında yoxdursa, A5 qəbul et
+            samplers[instCode] = new Tone.Sampler({
+              urls: { [baseNote]: `${instCode}.mp3` },
+              baseUrl: `/samples/`,
+              onload: resolve
+            }).toDestination();
+          });
+        });
+
+        await Promise.all(loadPromises);
+        
+        if (!recorder) recorder = new Tone.Recorder();
+        Object.values(samplers).forEach(sampler => sampler.connect(recorder));
+
+        Tone.Transport.cancel();
+        let maxTime = 0;
+        
+        playData.forEach(({ inst, note, time }) => {
+          Tone.Transport.schedule((t) => {
+            samplers[inst].triggerAttackRelease(note, "8n", t);
+          }, "+" + time);
+          if (time > maxTime) maxTime = time;
+        });
+
+        els.tTit.innerText = "Musbix Orijinal Kompozisiyası"; 
+        els.pStat.innerText = "Tam hazırdır!"; 
+        els.pBtn.classList.remove("hidden");
+        
+        // RECORDER VƏ PLAY LOGIC
+        els.pBtn.onclick = async () => {
+          await Tone.start();
+          Tone.Transport.stop();
+          Tone.Transport.position = 0;
+          recorder.start();
+          Tone.Transport.start();
+          
+          els.pBtn.innerText = "Çalınır..."; els.pBtn.disabled = true;
+          
+          // Musiqi bitəndə recordu saxla və yükləmə düyməsini aç
+          setTimeout(async () => {
+            Tone.Transport.stop();
+            els.pBtn.innerText = "▶ Yenidən Dinlə"; els.pBtn.disabled = false;
+            
+            const recording = await recorder.stop();
+            audioUrl = URL.createObjectURL(recording);
+            els.dBtn.classList.remove("hidden");
+          }, (maxTime + 2) * 1000); // Saniyə hesablaması (+2 saniyə uzantı)
+        };
+
+        els.dBtn.onclick = () => {
+          const anchor = document.createElement("a");
+          anchor.download = "musbix-audio.webm";
+          anchor.href = audioUrl;
+          anchor.click();
+        };
 
       } catch (err) {
-        alert("Musiqi yaradılanda xəta baş verdi: " + err.message);
+        alert("Xəta: " + err.message);
+        els.pStat.innerText = "Uğursuz əməliyyat.";
       } finally {
-        els.gBtn.disabled = false; 
-        els.gBtn.innerText = t.generateBtn;
-      }
-    });
-
-    els.pBtn.addEventListener("click", async () => {
-      const t = translations[currentLang];
-      await Tone.start();
-      
-      if (!isPlaying) {
-        Tone.Transport.start(); sequence.start(0); isPlaying = true;
-        els.iPlay.classList.add("hidden"); els.iPause.classList.remove("hidden"); els.pStat.innerText = t.playingStatus;
-      } else {
-        Tone.Transport.stop(); sequence.stop(); isPlaying = false;
-        els.iPause.classList.add("hidden"); els.iPlay.classList.remove("hidden"); els.pStat.innerText = t.stoppedStatus;
+        els.gBtn.disabled = false; els.gBtn.innerText = "Musiqini Sintez Et";
       }
     });
   </script>
