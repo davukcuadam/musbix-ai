@@ -1,94 +1,78 @@
-// 4. MUSBİX Aİ MÜHƏRRİKİ
-    els.gBtn.addEventListener("click", async () => {
-      const userPrompt = els.pInp.value.trim();
-      if (!userPrompt) return alert("Zəhmət olmasa bir təsvir daxil edin.");
-      
-      const t = translations[currentLang];
-      els.gBtn.disabled = true; 
-      els.gBtn.innerText = t.generatingBtn;
-      els.pBtn.disabled = true;
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Yalnız POST sorğuları qəbul edilir.' });
+  }
 
-      try {
-        const res = await fetch('/api/generate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: userPrompt })
-        });
-        const data = await res.json();
-        
-        if (!res.ok) throw new Error(data.error || "Server xətası baş verdi");
+  const { prompt } = req.body;
+  if (!prompt || typeof prompt !== 'string' || prompt.trim().length === 0) {
+    return res.status(400).json({ error: 'Keçərli mətn (prompt) daxil edilməyib.' });
+  }
 
-        let musbixCode = data.result;
-        
-        // AI-nin nə qaytardığını arxaplanda (F12) görmək üçün:
-        console.log("DeepSeek-dən gələn xam cavab:\n", musbixCode);
+  if (prompt.length > 100) {
+    return res.status(400).json({ error: 'Prompt çox uzundur. Maksimum 100 simvol yaza bilərsiniz.' });
+  }
 
-        let charCount = musbixCode.length;
-        let tokenCost = Math.ceil(charCount / 100) * 10;
-        
-        if (currentJeton < tokenCost) {
-          throw new Error(`Kifayət qədər jetonunuz yoxdur. Bu musiqi üçün ${tokenCost} jeton lazımdır.`);
-        }
-        currentJeton = Math.max(0, currentJeton - tokenCost); 
-        els.jNum.innerText = `${currentJeton} Jeton`;
+  const apiKey = process.env.DEEPSEEK_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({ error: 'Serverdə DEEPSEEK_API_KEY tənzimlənməyib.' });
+  }
 
-        const lines = musbixCode.split('\n');
-        const playData = [];
-        const usedInstruments = new Set();
+  // MUSBIX AI SYSTEM PROMPT — Sərt "yalnız saf kod" qaydası ilə
+  const systemInstruction = `GÖREVİN: Sen profesyonel bir müzik yapımcısı ve bestecisin. Aşağıdaki özel müzik motoru kodlama sistemini kullanarak bana polifonik, duygusal ve profesyonel aranje edilmiş müzik kodları yazacaksın.
 
-        lines.forEach(line => {
-          // YENİ AĞILLI REGEX: Sətrin harasında olursa olsun, kodu tapıb çıxaracaq!
-          const match = line.match(/([A-Z]{2})\s*:\s*([A-Za-z0-9#]+)\s*-\s*([0-9.]+)/);
-          
-          if (match) {
-            const [, inst, note, time] = match;
-            playData.push({ inst, note, time: parseFloat(time) });
-            usedInstruments.add(inst);
-          }
-        });
+Sistem Sözdizimi (Syntax) Kuralları:
+Format kalıbı daima [KOD]:[NOTA][OKTAV]-[ZAMAN] şeklindedir (Örn: PI:C4-0.0 ile piyano, orta Do notasına sıfırıncı vuruşta başlar).
+Notalar İngiliz sistemindedir (C, D, E, F, G, A, B), diyez (#) alabilir ve oktav aralığı 1 (en kalın bas) ile 8 (en tiz) arasındadır. (Bemol b kullanma, daima diyez # kullan)
 
-        if (playData.length === 0) {
-          throw new Error("AI düzgün formatda kod qaytarmadı. Zəhmət olmasa təsviri dəyişib yenidən yoxlayın.");
-        }
+Zamanlama ve Ritim Matematiği:
+Zamanlama ondalık sayılarla işler; hızlı arpejler ve 4/4'lük ritimler için zamanı 0.25 adımlarla artır.
+Aksiyon ve kovalamaca hissi yaratan 6/8'lik dörtnal ritimler için notaları 0.33 adımlarla yaz.
+Akor oluşturmak veya orkestrayı aynı anda vurdurmak için farklı enstrüman kodlarına tam olarak aynı zaman değerini ver.
 
-        els.pStat.innerText = "Səs Alətləri Yüklənir...";
+Profesyonel Aranje Standartları:
+Alt frekansları asla boş bırakma; her zaman CB (Contrabass) veya TB (Tuba) kullanarak 1. ve 2. oktavlardan kesintisiz destek frekansı sağla.
+Psikolojik gerilim ve tekinsizlik hissi için birbirine çok yakın, uyumsuz frekansları aynı saniyede üst üste bindirerek dissonans yarat.
+Zirve noktalarında (climax) en az 3-5 farklı enstrümanı aynı vuruşta birleştirerek boşluksuz bir duygu duvarı (wall of sound) inşa et.
+DİKKAT: Aynı milisaniyede farklı ses efektleri kullanmak mükemmel ama trumpet ile organ gibi dolu sesli şeyleri aynı anda çalınca ses kırılıyor. Sesleri kontrollü kullan.
 
-        const loadPromises = Array.from(usedInstruments).map(instCode => {
-          return new Promise((resolve) => {
-            if (!samplers[instCode]) {
-              const baseNote = baseNotes[instCode] || "A5"; 
-              samplers[instCode] = new Tone.Sampler({
-                urls: { [baseNote]: `${instCode}.mp3` },
-                baseUrl: `/samples/`,
-                onload: resolve
-              }).toDestination();
-            } else {
-              resolve(); 
-            }
-          });
-        });
+Enstrüman Sınıflandırması (Kullanabileceğin kodlar SADECE bunlardır):
+PI (Piano), CB (Contrabass), CE (Cello), FL (Flute), VI (Violin), BE (Bass Electric), OR (Organ), HR (Harp), FH (French Horn), TR (Trombone), TP (Trumpet), TB (Tuba), GE (Guitar Electric), GA (Guitar Acoustic), XY (Xylophone).
 
-        await Promise.all(loadPromises);
-        
-        Tone.Transport.cancel();
-        maxPlayTime = 0;
-        
-        playData.forEach(({ inst, note, time }) => {
-          Tone.Transport.schedule((t) => {
-            samplers[inst].triggerAttackRelease(note, "8n", t);
-          }, "+" + time);
-          if (time > maxPlayTime) maxPlayTime = time;
-        });
+MUTLAK ÇIKTI KURALLARI (ÇOK ÖNEMLİ — ASLA İHLAL ETME):
+1. SADECE ve SADECE kod satırları yaz. Örnek çıktı formatı: PI:C4-0.0
+2. "Bölüm 1", "Giriş", "Kısım 2", "(0.00 - 15.00 sn)" gibi HİÇBİR başlık, bölüm adı, zaman aralığı açıklaması veya alt başlık YAZMA.
+3. "Tabii", "İşte kodun", "Umarım beğenirsin" gibi HİÇBİR giriş veya kapanış cümlesi YAZMA.
+4. Markdown işareti (\`\`\`) KULLANMA.
+5. Kod satırı olmayan HİÇBİR açıklama, yorum veya not YAZMA.
+6. Cevabının İLK karakterinden İTİBAREN doğrudan kod satırlarıyla başla, SON karakterine kadar sadece kod satırı olsun.`;
 
-        els.tTit.innerText = "Musbix Orijinal Bəstə"; 
-        els.pStat.innerText = t.readyStatus;
-        els.pBtn.disabled = false;
-
-      } catch (err) {
-        alert("Xəta: " + err.message);
-        els.pStat.innerText = "Xəta baş verdi";
-      } finally {
-        els.gBtn.disabled = false; 
-        els.gBtn.innerText = t.generateBtn;
-      }
+  try {
+    const response = await fetch('https://api.deepseek.com/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'deepseek-chat',
+        messages: [
+          { role: 'system', content: systemInstruction },
+          { role: 'user', content: prompt }
+        ],
+        max_tokens: 4096,
+        temperature: 0.8
+      })
     });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return res.status(response.status).json({ error: data.error?.message || 'DeepSeek API xətası baş verdi.' });
+    }
+
+    return res.status(200).json({ success: true, result: data.choices[0].message.content });
+
+  } catch (error) {
+    return res.status(500).json({ error: 'Server daxili xətası: ' + error.message });
+  }
+}
