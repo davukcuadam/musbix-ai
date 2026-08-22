@@ -226,10 +226,22 @@
     let samplers = {};
     let maxPlayTime = 0;
 
+    // Kodun əsl "A5" fərziyyəsi — sənin nümunə fayllarının həqiqi qeyd notu bilinmir.
     const baseNotes = {
-      "PI": "A5", "CB": "A5", "CE": "A5", "FL": "A5", "VI": "A5",
-      "BE": "A5", "OR": "A5", "HR": "A5", "FH": "A5", "TR": "A5",
-      "TP": "A5", "TB": "A5", "GE": "A5", "GA": "A5", "XY": "A5"
+      "BE": "A5", "BN": "A5", "CE": "A5", "CL": "A5", "CB": "A5",
+      "FL": "A5", "FH": "A5", "GA": "A5", "GE": "A5", "GN": "A5",
+      "HM": "A5", "HR": "A5", "OR": "A5", "SA": "A5", "TR": "A5",
+      "TP": "A5", "TB": "A5"
+    };
+
+    // Kodu sənin GitHub-dakı əsl fayl adına bağlayır (adları dəyişməyə ehtiyac yoxdur).
+    const sampleFiles = {
+      "BE": "Bass-electric.mp3", "BN": "bassoon.mp3", "CE": "cello.mp3",
+      "CL": "clarinet.mp3", "CB": "contrabass.mp3", "FL": "flute.mp3",
+      "FH": "french-horn.mp3", "GA": "guitar-acoustic.mp3", "GE": "guitar-electric.mp3",
+      "GN": "guitar-nylon.mp3", "HM": "harmonium.mp3", "HR": "harp.mp3",
+      "OR": "organ.mp3", "SA": "saxophone.mp3", "TR": "trombone.mp3",
+      "TP": "trumpet.mp3", "TB": "tuba.mp3"
     };
 
     const els = {
@@ -273,10 +285,14 @@
       }
     });
 
-    // 4. MUSBİX Aİ MÜHƏRRİKİ (Qlobal ovlama ilə — mətndə hara olursa olsun kodu tapır)
+    // 4. MUSBİX Aİ MÜHƏRRİKİ (Qismən ödəniş + nümunə-fayl xətası tutma ilə)
     els.gBtn.addEventListener("click", async () => {
       const userPrompt = els.pInp.value.trim();
       if (!userPrompt) return alert("Zəhmət olmasa bir təsvir daxil edin.");
+
+      if (currentJeton <= 0) {
+        return alert("Balansınızda jeton qalmayıb. Yeni musiqi yaratmaq üçün jeton lazımdır.");
+      }
 
       const t = translations[currentLang];
       els.gBtn.disabled = true;
@@ -304,20 +320,33 @@
         const musbixCode = data.result;
         console.log("DeepSeek-dən gələn xam cavab:\n", musbixCode);
 
+        // --- JETON HESABLAMASI VƏ QİSMƏN ÖDƏNİŞ MƏNTİQİ ---
+        // Balans bəstənin hamısına çatmırsa, yalnız ödəyə biləcəyi hissəni saxlayırıq,
+        // qalan bütün jetonu yandırırıq və istifadəçini xəbərdar edirik.
         const charCount = musbixCode.length;
-        const tokenCost = Math.ceil(charCount / 100) * 10;
+        const fullCost = Math.ceil(charCount / 100) * 10;
 
-        if (currentJeton < tokenCost) {
-          throw new Error(`Kifayət qədər jetonunuz yoxdur. Bu musiqi üçün ${tokenCost} jeton lazımdır.`);
+        let codeToPlay = musbixCode;
+        let isPartial = false;
+
+        if (fullCost > currentJeton) {
+          isPartial = true;
+          const affordableChars = currentJeton * 10; // 10 jeton = 100 simvol => 1 jeton = 10 simvol
+          const cut = musbixCode.slice(0, affordableChars);
+          const lastNewline = cut.lastIndexOf('\n');
+          codeToPlay = lastNewline > -1 ? cut.slice(0, lastNewline) : cut;
         }
+
+        const tokenCost = isPartial ? currentJeton : fullCost;
         currentJeton = Math.max(0, currentJeton - tokenCost);
         if (currentUser) {
           localStorage.setItem("musbix_jeton_" + currentUser.uid, currentJeton);
         }
         els.jNum.innerText = `${currentJeton} Jeton`;
 
+        // --- KODU OXUMA (Qlobal ovlama) ---
         const codeRegex = /([A-Z]{2})\s*:\s*([A-Za-z0-9#]+)\s*-\s*([0-9.]+)/g;
-        const matches = [...musbixCode.matchAll(codeRegex)];
+        const matches = [...codeToPlay.matchAll(codeRegex)];
 
         const playData = [];
         const usedInstruments = new Set();
@@ -328,19 +357,25 @@
 
         if (playData.length === 0) {
           console.warn("Heç bir düzgün kod tapılmadı. Xam cavabı yuxarıdan yoxlayın.");
-          throw new Error("AI düzgün formatda kod qaytarmadı. Zəhmət olmasa təsviri dəyişib yenidən yoxlayın.");
+          throw new Error("AI düzgün formatda kod qaytarmadı, ya da balans bir nota belə çatmadı.");
         }
 
         els.pStat.innerText = "Səs Alətləri Yüklənir...";
 
+        // Nümunə (sample) faylı tapılmasa (404) əbədi asılı qalmaq əvəzinə aydın xəta verir.
         const loadPromises = Array.from(usedInstruments).map(instCode => {
-          return new Promise((resolve) => {
+          return new Promise((resolve, reject) => {
+            const fileName = sampleFiles[instCode];
+            if (!fileName) {
+              return reject(new Error(`${instCode} kodu üçün nümunə fayl təyin olunmayıb.`));
+            }
             if (!samplers[instCode]) {
               const baseNote = baseNotes[instCode] || "A5";
               samplers[instCode] = new Tone.Sampler({
-                urls: { [baseNote]: `${instCode}.mp3` },
+                urls: { [baseNote]: fileName },
                 baseUrl: `/samples/`,
-                onload: resolve
+                onload: resolve,
+                onerror: () => reject(new Error(`${fileName} tapılmadı. GitHub-da /samples qovluğunda bu faylın olduğunu yoxlayın.`))
               }).toDestination();
             } else {
               resolve();
@@ -361,7 +396,14 @@
         });
 
         els.tTit.innerText = "Musbix Orijinal Bəstə";
-        els.pStat.innerText = t.readyStatus;
+
+        if (isPartial) {
+          els.pStat.innerText = `Yarımçıq (${maxPlayTime.toFixed(1)} san.) — jeton bitdi`;
+          alert(`Diqqət: Balansınız bəstənin hamısını qarşılamadı. Yalnız ilk ${maxPlayTime.toFixed(1)} saniyəlik hissə səslənəcək. Qalanı üçün əlavə jeton lazımdır.`);
+        } else {
+          els.pStat.innerText = t.readyStatus;
+        }
+
         els.pBtn.disabled = false;
 
       } catch (err) {
