@@ -83,12 +83,64 @@ Psikolojik gerilim ve tekinsizlik hissi için birbirine çok yakın, uyumsuz fre
 DİKKAT: trumpet ile organ gibi dolu sesli enstrümanları aynı milisaniyede birlikte çalmak sesin kırılmasına yol açabilir. Sesleri kontrollü katmanla.
 Kullanıcı açıkça çok kısa ya da çok uzun istemediği sürece, kompozisyon tipik olarak 20-50 saniye civarında, zengin ve çok katmanlı olmalı.
 
+⚠️ TONAL MODÜLASYON — ÇOK ÖNEMLİ (EPİK HİS İÇİN ZORUNLU):
+Beste boyunca TEK BİR nota/akor merkezinde "sıkışıp kalmak" YASAKTIR. Profesyonel film müziği gibi bir "yükselme" hissi yaratmak için, her ~4-8 saniyede bir TÜM enstrümanlar birlikte YENİ bir tonal merkeze (yeni bir kök notaya) kaymalı. Örneğin: C minor → Ab Major (G#) → F minor → G Major → tekrar C gibi döngüsel bir ilerleme kullanabilirsin. Bas hattı (CB, TB, BE) da bu modülasyona MUTLAKA eşlik etmeli — bas notası sabit kalırken üstteki enstrümanlar değişiyorsa bu YETERSİZDİR, TÜM katman birlikte kaymalı.
+
+✅ HEDEF KALİTE ÖRNEĞİ (bu YOĞUNLUK ve MODÜLASYON seviyesini hedefle — birebir kopyalama, kendi sahnene uyarla):
+CB:C2-0.0
+BE:C2-0.0
+OR:C3-0.0
+CE:C3-0.0
+GE:C4-0.0
+VI:C5-0.0
+TB:C1-0.0
+PI:C5-0.0
+XY:C6-0.0
+PI:D#5-0.5
+XY:D#6-0.5
+PI:G5-1.0
+XY:G6-1.0
+PI:C6-1.5
+XY:C7-1.5
+CB:C2-2.0
+BE:C2-2.0
+OR:C3-2.0
+CE:C3-2.0
+GE:C4-2.0
+VI:C5-2.0
+TB:C1-2.0
+PI:G5-2.0
+XY:G6-2.0
+CB:G#1-4.0
+BE:G#1-4.0
+OR:G#2-4.0
+CE:G#2-4.0
+GE:G#3-4.0
+VI:G#4-4.0
+TB:G#1-4.0
+PI:G#4-4.0
+XY:G#5-4.0
+PI:C5-4.5
+XY:C6-4.5
+PI:D#5-5.0
+XY:D#6-5.0
+CB:F1-8.0
+BE:F1-8.0
+OR:F2-8.0
+CE:F2-8.0
+GE:F3-8.0
+VI:F4-8.0
+TB:F1-8.0
+PI:F4-8.0
+XY:F5-8.0
+(Dikkat et: 0.0-2.0 saniyede C minor'dayız, 4.0'da TÜM enstrümanlar birlikte G# (Ab Major) tonuna kayıyor, 8.0'da F minor'a geçiyor — bas dahil her katman birlikte kayıyor. Aynı 4 saniyelik bloğun içinde bile üst katmanlarda (PI, XY) nota nota yukarı hareket eden bir arpej var, asla aynı nota tekrarlanmıyor. Sen de kendi sahnenin duygusuna göre böyle bir akor/tonalite döngüsü kur.)
+
 ENSTRÜMAN SINIFLANDIRMASI (Kullanabileceğin kodlar SADECE bunlardır — başka hiçbir kod kullanma):
 BE (Bass Electric), BN (Bassoon), CE (Cello), CL (Clarinet), CB (Contrabass), FL (Flute), FH (French Horn), GA (Guitar Acoustic), GE (Guitar Electric), GN (Guitar Nylon), HM (Harmonium), HR (Harp), OR (Organ), PI (Piano), SA (Saxophone), TR (Trombone), TP (Trumpet), TB (Tuba), VI (Violin), XY (Xylophone).
 
 MUTLAK ÇIKTI KURALLARI (ÇOK ÖNEMLİ — ASLA İHLAL ETME):
 1. SADECE ve SADECE kod satırları yaz. Örnek çıktı formatı: CB:C2-0.0
-2. "Bölüm 1", "Giriş", "Kısım 2", "(0.00 - 15.00 sn)" gibi HİÇBİR başlık, bölüm adı, zaman aralığı açıklaması veya alt başlık YAZMA. (Yukarıdaki 4 bölümlü yapı senin İÇSEL planlama aracındır, çıktıda asla görünmemeli.)
+2. "Bölüm 1", "Giriş", "Kısım 2", "(0.00 - 15.00 sn)" gibi HİÇBİR başlık, bölüm adı, zaman aralığı açıklaması veya alt başlık YAZMA. (Yukarıdaki yapısal rehber ve örnek senin İÇSEL planlama aracındır, çıktıda asla görünmemeli.)
 3. "Tabii", "İşte kodun", "Umarım beğenirsin" gibi HİÇBİR giriş veya kapanış cümlesi YAZMA.
 4. Markdown işareti (\`\`\`) KULLANMA.
 5. Kod satırı olmayan HİÇBİR açıklama, yorum veya not YAZMA.
@@ -122,7 +174,7 @@ MUTLAK ÇIKTI KURALLARI (ÇOK ÖNEMLİ — ASLA İHLAL ETME):
           { role: 'system', content: systemInstruction },
           { role: 'user', content: prompt }
         ],
-        max_tokens: 4096,
+        max_tokens: 8192,
         temperature: 0.9
       })
     });
