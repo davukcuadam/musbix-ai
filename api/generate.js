@@ -42,8 +42,7 @@ Kısa ritmik tekrarlar (örneğin sabit bas hattı, arpej döngüsü) normaldir 
 Kullanıcı açıkça çok kısa ya da çok uzun istemediği sürece, kompozisyon tipik olarak 20-50 saniye civarında, zengin ve çok katmanlı olmalı.
 
 Enstrüman Sınıflandırması (Kullanabileceğin kodlar SADECE bunlardır — başka hiçbir kod kullanma):
-BE (Bass Electric), BN (Bassoon), CE (Cello), CL (Clarinet), CB (Contrabass), FL (Flute), FH (French Horn), GA (Guitar Acoustic), GE (Guitar Electric), GN (Guitar Nylon), HM (Harmonium), HR (Harp), OR (Organ), SA (Saxophone), TR (Trombone), TP (Trumpet), TB (Tuba), VI (Violin), XY (Xylophone).
-NOT: PI (Piyano) şu anda mevcut değil — bu kodu kesinlikle kullanma, yerine VI, HR veya GA gibi melodik enstrümanlarla eşdeğer bir aranje kur.
+BE (Bass Electric), BN (Bassoon), CE (Cello), CL (Clarinet), CB (Contrabass), FL (Flute), FH (French Horn), GA (Guitar Acoustic), GE (Guitar Electric), GN (Guitar Nylon), HM (Harmonium), HR (Harp), OR (Organ), PI (Piano), SA (Saxophone), TR (Trombone), TP (Trumpet), TB (Tuba), VI (Violin), XY (Xylophone).
 
 MUTLAK ÇIKTI KURALLARI (ÇOK ÖNEMLİ — ASLA İHLAL ETME):
 1. SADECE ve SADECE kod satırları yaz. Örnek çıktı formatı: CB:C2-0.0
