@@ -83,8 +83,17 @@ Psikolojik gerilim ve tekinsizlik hissi için birbirine çok yakın, uyumsuz fre
 DİKKAT: trumpet ile organ gibi dolu sesli enstrümanları aynı milisaniyede birlikte çalmak sesin kırılmasına yol açabilir. Sesleri kontrollü katmanla.
 Kullanıcı açıkça çok kısa ya da çok uzun istemediği sürece, kompozisyon tipik olarak 20-50 saniye civarında, zengin ve çok katmanlı olmalı.
 
+⚠️ ENSTRÜMAN ROLLERİ (ORKESTRASYON) — ÇOK ÖNEMLİ:
+En büyük hata: TÜM enstrümanları aynı ritimde, aynı yönde, sadece farklı oktavlarda hareket ettirmek (paralel unison). Bu, "basit bir melodiye 3-4 enstrüman eklemek" gibi yavan bir sonuç verir ve YASAKTIR. Gerçek orkestrasyonda her enstrüman GRUBU kendine has bir GÖREV üstlenir ve FARKLI bir ritimde hareket eder:
+- BAS GRUBU (CB, TB, BE): Kök notayı tutar, YAVAŞ hareket eder (genelde yarım/tam nota süresinde — örn. 2.0 saniyede bir değişir), akorun temelini kurar.
+- HARMONİ/PAD GRUBU (OR, HM, sürekli akorlar çalan GA/GE): Bas ile aynı hızda veya biraz daha sık değişir, akoru ORTA katmanda doldurur.
+- ARPEJ/SÜSLEME GRUBU (PI, HR, XY): HIZLI hareket eder (0.25-0.33 adımlarla), akorun notalarını sırayla yukarı/aşağı gezdirerek parıltılı bir doku yaratır — bas ve harmoniden TAMAMEN FARKLI bir ritimde.
+- MELODİ/LİDER GRUBU (VI, FL, TP, SA, CE): Daha SEYREK ama BELİRGİN, akılda kalan bir tema çizer; bazen uzun tutulan notalar (2-4 saniye), bazen ifadeli kısa cümleler kullanır.
+- VURGU/DRAMATİK GRUP (TR, FH, GN): Özellikle zirve anlarında ani, güçlü vurgular için kullanılır, sürekli çalmaz.
+Bu gruplar AYNI ANDA çalsa bile HER BİRİ KENDİ RİTMİNİ korur — asla hepsi birden aynı zaman aralıklarıyla, aynı yönde hareket etmemeli. Bu farklılaşma, sesin "epik" ve "profesyonel" hissetmesinin asıl sebebidir.
+
 ⚠️ TONAL MODÜLASYON — ÇOK ÖNEMLİ (EPİK HİS İÇİN ZORUNLU):
-Beste boyunca TEK BİR nota/akor merkezinde "sıkışıp kalmak" YASAKTIR. Profesyonel film müziği gibi bir "yükselme" hissi yaratmak için, her ~4-8 saniyede bir TÜM enstrümanlar birlikte YENİ bir tonal merkeze (yeni bir kök notaya) kaymalı. Örneğin: C minor → Ab Major (G#) → F minor → G Major → tekrar C gibi döngüsel bir ilerleme kullanabilirsin. Bas hattı (CB, TB, BE) da bu modülasyona MUTLAKA eşlik etmeli — bas notası sabit kalırken üstteki enstrümanlar değişiyorsa bu YETERSİZDİR, TÜM katman birlikte kaymalı.
+Beste boyunca TEK BİR nota/akor merkezinde "sıkışıp kalmak" YASAKTIR. Profesyonel film müziği gibi bir "yükselme" hissi yaratmak için, her ~4-8 saniyede bir TÜM enstrümanlar birlikte YENİ bir tonal merkeze (yeni bir kök notaya) kaymalı. Örneğin: C minor → Ab Major (G#) → F minor → G Major → tekrar C gibi döngüsel bir ilerleme kullanabilirsin. Bas hattı (CB, TB, BE) da bu modülasyona MUTLAKA eşlik etmeli — bas notası sabit kalırken üstteki enstrümanlar değişiyorsa bu YETERSİZDİR, TÜM katman birlikte kaymalı. Bestenin HİÇBİR 4 saniyelik bölümü bir öncekiyle birebir aynı olmamalı — sürekli, kesintisiz bir gelişim şart.
 
 ✅ HEDEF KALİTE ÖRNEĞİ (bu YOĞUNLUK ve MODÜLASYON seviyesini hedefle — birebir kopyalama, kendi sahnene uyarla):
 CB:C2-0.0
@@ -157,7 +166,17 @@ MUTLAK ÇIKTI KURALLARI (ÇOK ÖNEMLİ — ASLA İHLAL ETME):
     const uniqueCombos = new Set(matches.map(m => m[1] + m[2]));
 
     if (uniqueInstruments.size <= 1) return true; // tək alət — qadağan olunmuş nümunə
-    if (uniqueCombos.size / matches.length < 0.15) return true; // həddindən artıq təkrar
+    if (uniqueCombos.size / matches.length < 0.15) return true; // qlobal həddindən artıq təkrar
+
+    // Yerli (pəncərəli) yoxlama — bəstənin YALNIZ bir hissəsi (məs. ortası) tıxanıb qalsa,
+    // qlobal nisbət bunu gizlədə bilər. Hər 24 sətirlik bloku ayrıca yoxlayırıq.
+    const WINDOW = 24;
+    for (let i = 0; i + WINDOW <= matches.length; i += WINDOW) {
+      const chunk = matches.slice(i, i + WINDOW);
+      const chunkCombos = new Set(chunk.map(m => m[1] + m[2]));
+      if (chunkCombos.size / chunk.length < 0.25) return true;
+    }
+
     return false;
   }
 
@@ -169,7 +188,7 @@ MUTLAK ÇIKTI KURALLARI (ÇOK ÖNEMLİ — ASLA İHLAL ETME):
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: 'deepseek-chat',
+        model: 'deepseek-v4-flash', // Rəsmi cari ID — köhnə "deepseek-chat" adı ləğv edilib, eyni qiymətdədir
         messages: [
           { role: 'system', content: systemInstruction },
           { role: 'user', content: prompt }
