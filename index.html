@@ -281,21 +281,37 @@
     let samplers = {};
     let maxPlayTime = 0;
 
-    // Kodun əsl "A5" fərziyyəsi — sənin nümunə fayllarının həqiqi qeyd notu bilinmir.
+    // ÖLÇÜLMÜŞ ƏSL NOTLAR (pitch_olc.py ilə python vasitəsilə real ölçülüb).
     const baseNotes = {
-      "BE": "A5", "BN": "A5", "CE": "A5", "CL": "A5", "CB": "A5",
-      "FL": "A5", "FH": "A5", "GA": "A5", "GE": "A5", "GN": "A5",
-      "HM": "A5", "HR": "A5", "OR": "A5", "SA": "A5", "TR": "A5",
-      "TP": "A5", "TB": "A5", "VI": "A5", "XY": "A5"
+      "BE": "A#1",  // bass-electric
+      "BN": "A2",   // bassoon
+      "CE": "A2",   // cello
+      "CL": "A#3",  // clarinet
+      "CB": "A2",   // contrabass
+      "FL": "A4",   // flute
+      "FH": "A1",   // french-horn
+      "GA": "A2",   // guitar-acoustic
+      "GE": "A2",   // guitar-electric
+      "GN": "A2",   // guitar-nylon
+      "HM": "A2",   // harmonium
+      "HR": "A2",   // harp
+      "OR": "A1",   // organ
+      "PI": "A1",   // piano
+      "SA": "A4",   // saxophone
+      "TR": "A#1",  // trombone
+      "TP": "A3",   // trumpet
+      "TB": "A#1",  // tuba
+      "VI": "A3",   // violin
+      "XY": "C5"    // xylophone
     };
 
-    // Kodu sənin GitHub-dakı əsl fayl adına bağlayır (adları dəyişməyə ehtiyac yoxdur).
+    // Kodu sənin flat_samples-dən yüklədiyin əsl fayl adına bağlayır.
     const sampleFiles = {
-      "BE": "Bass-electric.mp3", "BN": "bassoon.mp3", "CE": "cello.mp3",
+      "BE": "bass-electric.mp3", "BN": "bassoon.mp3", "CE": "cello.mp3",
       "CL": "clarinet.mp3", "CB": "contrabass.mp3", "FL": "flute.mp3",
       "FH": "french-horn.mp3", "GA": "guitar-acoustic.mp3", "GE": "guitar-electric.mp3",
       "GN": "guitar-nylon.mp3", "HM": "harmonium.mp3", "HR": "harp.mp3",
-      "OR": "organ.mp3", "SA": "saxophone.mp3", "TR": "trombone.mp3",
+      "OR": "organ.mp3", "PI": "piano.mp3", "SA": "saxophone.mp3", "TR": "trombone.mp3",
       "TP": "trumpet.mp3", "TB": "tuba.mp3", "VI": "violin.mp3", "XY": "xylophone.mp3"
     };
 
@@ -442,6 +458,9 @@
           console.warn("Heç bir düzgün kod tapılmadı. Xam cavabı yuxarıdan yoxlayın.");
           throw new Error("AI düzgün formatda kod qaytarmadı, ya da balans bir nota belə çatmadı.");
         }
+
+        console.log("İstifadə olunan alətlər:", [...usedInstruments].map(c => `${c} → ${sampleFiles[c] || "TAPILMADI"}`));
+        console.log("Ümumi nota sayı:", playData.length, "| Alət başına:", [...usedInstruments].map(c => `${c}: ${playData.filter(p => p.inst === c).length}`));
 
         els.pStat.innerText = "Səs Alətləri Yüklənir...";
 
