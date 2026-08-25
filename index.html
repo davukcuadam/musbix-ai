@@ -71,6 +71,8 @@
     textarea { width: 100%; height: 120px; background: rgba(8, 3, 18, 0.8); border: 1px solid var(--border-color); border-radius: 12px; color: #fff; padding: 14px; font-size: 14px; resize: none; outline: none; transition: border-color 0.25s; }
     textarea:focus { border-color: var(--accent-glow); }
 
+    #mini-game-wrap { animation: fadeInUp 0.4s ease; }
+    #mini-game-canvas { width: 100%; height: 180px; display: block; border-radius: 12px; background: rgba(8, 3, 18, 0.85); border: 1px solid var(--border-color); cursor: pointer; }
     .player-box { background: rgba(8, 3, 18, 0.8); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .player-controls { display: flex; align-items: center; gap: 10px; }
     .play-circle { width: 48px; height: 48px; border-radius: 50%; background: #ffffff; color: #000000; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s, box-shadow 0.2s; flex-shrink: 0; }
@@ -162,6 +164,13 @@
         </div>
         <textarea id="prompt-input" maxlength="100" data-i18n-placeholder="promptPlaceholder" placeholder="Musiqi xəyalını yaz... (Maks: 100 simvol)"></textarea>
         <button id="generate-btn" class="btn btn-primary" data-i18n="generateBtn">Musiqini Sintez Et</button>
+        <div id="mini-game-wrap" class="hidden">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span style="font-size:12px; color:var(--text-sub);">🎮 Gözləyərkən notaları tut</span>
+            <span id="game-score" style="font-size:12px; color:var(--gold); font-weight:700;">0 xal</span>
+          </div>
+          <canvas id="mini-game-canvas" width="380" height="180"></canvas>
+        </div>
         <div class="player-box">
           <div>
             <div id="track-title" style="font-weight: 700; font-size: 15px;" data-i18n="waitTitle">Bəstə Gözlənilir</div>
@@ -381,7 +390,100 @@
       }
     });
 
-    // 5. MUSBİX Aİ MÜHƏRRİKİ (Qismən ödəniş + nümunə-fayl xətası tutma ilə)
+    // 5. GÖZLƏMƏ TƏCRÜBƏSİ — Dəyişən status yazıları + kiçik "nota tut" mini-oyunu
+    const loadingMessages = [
+      "Notalar müəyyənləşdirilir...",
+      "Alətlər səhnəyə dəvət olunur...",
+      "Bas xətti qurulur...",
+      "Harmoniya axtarılır...",
+      "AI bəstəkarımız ilhamlanır...",
+      "Akkordlar sınaqdan keçirilir...",
+      "Ritm naxışı toxunur...",
+      "Zirvə anı hazırlanır...",
+      "Son cilalama aparılır..."
+    ];
+    let loadingMsgTimer = null;
+
+    function startLoadingMessages() {
+      let idx = 0;
+      els.pStat.innerText = loadingMessages[0];
+      loadingMsgTimer = setInterval(() => {
+        idx = (idx + 1) % loadingMessages.length;
+        els.pStat.innerText = loadingMessages[idx];
+      }, 1800);
+    }
+
+    function stopLoadingMessages() {
+      if (loadingMsgTimer) clearInterval(loadingMsgTimer);
+      loadingMsgTimer = null;
+    }
+
+    const gameWrap = document.getElementById("mini-game-wrap");
+    const gameCanvas = document.getElementById("mini-game-canvas");
+    const gameCtx = gameCanvas.getContext("2d");
+    const gameScoreEl = document.getElementById("game-score");
+    const noteSymbols = ["♪", "♫", "♬", "🎵"];
+    let gameNotes = [], gameScore = 0, gameRunning = false, gameAnimId = null, gameSpawnTimer = null;
+
+    function gameSpawnNote() {
+      gameNotes.push({
+        x: Math.random() * (gameCanvas.width - 30) + 15,
+        y: -20,
+        speed: 1.0 + Math.random() * 1.6,
+        symbol: noteSymbols[Math.floor(Math.random() * noteSymbols.length)]
+      });
+    }
+
+    function gameLoop() {
+      if (!gameRunning) return;
+      gameCtx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+      gameNotes.forEach(n => {
+        n.y += n.speed;
+        gameCtx.font = "26px sans-serif";
+        gameCtx.fillStyle = "#c084fc";
+        gameCtx.fillText(n.symbol, n.x, n.y);
+      });
+      gameNotes = gameNotes.filter(n => n.y < gameCanvas.height + 20);
+      gameAnimId = requestAnimationFrame(gameLoop);
+    }
+
+    gameCanvas.addEventListener("click", (e) => {
+      if (!gameRunning) return;
+      const rect = gameCanvas.getBoundingClientRect();
+      const scaleX = gameCanvas.width / rect.width;
+      const scaleY = gameCanvas.height / rect.height;
+      const clickX = (e.clientX - rect.left) * scaleX;
+      const clickY = (e.clientY - rect.top) * scaleY;
+      for (let i = gameNotes.length - 1; i >= 0; i--) {
+        const n = gameNotes[i];
+        if (Math.abs(clickX - n.x) < 22 && Math.abs(clickY - n.y) < 22) {
+          gameNotes.splice(i, 1);
+          gameScore++;
+          gameScoreEl.innerText = gameScore + " xal";
+          break;
+        }
+      }
+    });
+
+    function startMiniGame() {
+      gameScore = 0;
+      gameScoreEl.innerText = "0 xal";
+      gameNotes = [];
+      gameRunning = true;
+      gameWrap.classList.remove("hidden");
+      gameLoop();
+      gameSpawnTimer = setInterval(gameSpawnNote, 650);
+    }
+
+    function stopMiniGame() {
+      gameRunning = false;
+      gameWrap.classList.add("hidden");
+      if (gameAnimId) cancelAnimationFrame(gameAnimId);
+      if (gameSpawnTimer) clearInterval(gameSpawnTimer);
+      gameNotes = [];
+    }
+
+    // 6. MUSBİX Aİ MÜHƏRRİKİ (Qismən ödəniş + nümunə-fayl xətası tutma ilə)
     els.gBtn.addEventListener("click", async () => {
       const t = translations[currentLang];
       const userPrompt = els.pInp.value.trim();
@@ -394,6 +496,8 @@
       els.gBtn.disabled = true;
       els.gBtn.innerText = t.generatingBtn;
       els.pBtn.disabled = true;
+      startLoadingMessages();
+      startMiniGame();
 
       try {
         const res = await fetch('/api/generate', {
@@ -467,6 +571,8 @@
         console.log("İstifadə olunan alətlər:", [...usedInstruments].map(c => `${c} → ${sampleFiles[c] || "TAPILMADI"}`));
         console.log("Ümumi nota sayı:", playData.length, "| Alət başına:", [...usedInstruments].map(c => `${c}: ${playData.filter(p => p.inst === c).length}`));
 
+        stopLoadingMessages();
+        stopMiniGame();
         els.pStat.innerText = "Səs Alətləri Yüklənir...";
 
         // Nümunə (sample) faylı tapılmasa (404) əbədi asılı qalmaq əvəzinə aydın xəta verir.
@@ -536,6 +642,8 @@
         showToast(t.genErr + err.message, "error");
         els.pStat.innerText = "Xəta baş verdi";
       } finally {
+        stopLoadingMessages();
+        stopMiniGame();
         els.gBtn.disabled = false;
         els.gBtn.innerText = t.generateBtn;
       }
