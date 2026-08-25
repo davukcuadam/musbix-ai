@@ -160,7 +160,8 @@ MUTLAK ÇIKTI KURALLARI (ÇOK ÖNEMLİ — ASLA İHLAL ETME):
   function isDegenerateOutput(text) {
     const codeRegex = /([A-Z]{2})\s*:\s*([A-Za-z0-9#]+)\s*-\s*([0-9.]+)/g;
     const matches = [...text.matchAll(codeRegex)];
-    if (matches.length < 20) return false; // qısa cavabı mühakimə etmə, buraxılsın
+    if (matches.length === 0) return true; // tam boş/pozğun cavab — mütləq yenidən cəhd
+    if (matches.length < 15) return true; // həddindən artıq qısa, ehtimal ki, natamam cavab
 
     const uniqueInstruments = new Set(matches.map(m => m[1]));
     const uniqueCombos = new Set(matches.map(m => m[1] + m[2]));
@@ -194,7 +195,8 @@ MUTLAK ÇIKTI KURALLARI (ÇOK ÖNEMLİ — ASLA İHLAL ETME):
           { role: 'user', content: prompt }
         ],
         max_tokens: 8192,
-        temperature: 0.9
+        temperature: 0.9,
+        thinking: { type: 'disabled' } // Cavab birbaşa "content"-də gəlsin, "reasoning_content"-ə bölünməsin
       })
     });
 
@@ -202,17 +204,30 @@ MUTLAK ÇIKTI KURALLARI (ÇOK ÖNEMLİ — ASLA İHLAL ETME):
     if (!response.ok) {
       throw { httpStatus: response.status, message: data.error?.message || 'DeepSeek API xətası baş verdi.' };
     }
-    return data.choices[0].message.content;
+
+    const choice = data.choices && data.choices[0];
+    const content = choice?.message?.content || '';
+
+    if (!content) {
+      // Diaqnostika üçün: Vercel loglarında niyə boş gəldiyini görmək üçün
+      console.warn('DeepSeek boş content qaytardı. finish_reason:', choice?.finish_reason, '| tam cavab:', JSON.stringify(data).slice(0, 500));
+    }
+
+    return content;
   }
 
   try {
     let musbixText = '';
-    const MAX_ATTEMPTS = 2; // Prompt indi çox güclüdür, bu yalnız nadir hallar üçün sığortadır
+    const MAX_ATTEMPTS = 3; // 2 kifayət etmirdi — bəzən 2-ci cəhd də degenerat çıxırdı
 
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
       musbixText = await callDeepSeek();
       if (!isDegenerateOutput(musbixText)) break;
-      console.warn(`Cəhd ${attempt}: degenerat (tək-alət/təkrarlı) cavab aşkarlandı, yenidən cəhd olunur...`);
+      console.warn(`Cəhd ${attempt}: degenerat (tək-alət/təkrarlı/boş) cavab aşkarlandı, yenidən cəhd olunur...`);
+    }
+
+    if (!musbixText || musbixText.trim().length === 0) {
+      return res.status(502).json({ error: 'DeepSeek boş cavab qaytardı. Zəhmət olmasa yenidən cəhd edin.' });
     }
 
     return res.status(200).json({ success: true, result: musbixText });
