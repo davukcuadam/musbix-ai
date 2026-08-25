@@ -480,7 +480,7 @@ PI:D5-62.0
 PI:B4-62.5
 PI:G4-63.0
 PI:D4-63.5
-
+teqrar dıyorum bu müzıgı falan qopyalama yada benzerleme sadece bu bır örnegtır yanı arasında süreglı bosluq bıraqan anıden yarıda gesılen bos bır müzıg yerıne bunun gıbı ıyıı baslangıc ıyı sonlugu olan ve daha onemlısı her notada araya bosluq qoyup mını bır döngüde dönmüyo bu müzıg qodunu ılhamlan ve her ne ıstersen ısteyeyım her zaman ama her zaman bosluq olmayan geregırse onemlı yerlere qoy ama her notada bosluq qoymadan en qalıtelı en ıyısını yarataraq  bır OST yap dıyınce evrenın en ıyı OST sını yap dıyınce bunu boş bır müzıge degılde cıddı bır OST yapma ısıne cevır her ne ıstersen sadece müzıg yap dersem bıle evrenın en ıyı müzıgını yapmaya calıs amacın qalıte olmalı
 
 Bu doğru örnekte dikkat et: AYNI zaman değerinde (0.0'da olduğu gibi) 4 farklı enstrüman AYNI ANDA çalıyor (bu bir akor/harmoni oluşturur — dikey katmanlaşma). Bas hattı (CB, TB) sürekli devam ediyor ama ÜSTÜNE her seferinde farklı enstrümanlar ve farklı notalar ekleniyor (yatay gelişim). Zaman ilerledikçe hem notalar hem de hangi enstrümanların çaldığı DEĞİŞİYOR.
 
