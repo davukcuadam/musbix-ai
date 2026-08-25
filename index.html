@@ -447,17 +447,22 @@
         const codeRegex = /([A-Z]{2})\s*:\s*([A-Za-z0-9#]+)\s*-\s*([0-9.]+)/g;
         const matches = [...codeToPlay.matchAll(codeRegex)];
 
+        const MAX_SONG_SECONDS = 90; // Nə olursa olsun, mahnı bu həddi keçə bilməz (sığorta)
         const playData = [];
         const usedInstruments = new Set();
         matches.forEach(([, inst, note, time]) => {
-          playData.push({ inst, note, time: parseFloat(time) });
-          usedInstruments.add(inst);
+          const parsedTime = parseFloat(time);
+          if (parsedTime <= MAX_SONG_SECONDS) {
+            playData.push({ inst, note, time: parsedTime });
+            usedInstruments.add(inst);
+          }
         });
 
         if (playData.length === 0) {
           console.warn("Heç bir düzgün kod tapılmadı. Xam cavabı yuxarıdan yoxlayın.");
           throw new Error("AI düzgün formatda kod qaytarmadı, ya da balans bir nota belə çatmadı.");
         }
+
 
         console.log("İstifadə olunan alətlər:", [...usedInstruments].map(c => `${c} → ${sampleFiles[c] || "TAPILMADI"}`));
         console.log("Ümumi nota sayı:", playData.length, "| Alət başına:", [...usedInstruments].map(c => `${c}: ${playData.filter(p => p.inst === c).length}`));
@@ -490,9 +495,28 @@
         Tone.Transport.cancel();
         maxPlayTime = 0;
 
-        playData.forEach(({ inst, note, time }) => {
+        // Boşluqsuz çalma: hər alətin öz notalarını ayrıca zamana görə sırala,
+        // hər nota YALNIZ "8n" ilə deyil, sonrakı notaya qədər davam etsin ki,
+        // bas/pad kimi uzun tutulan notalar arasında səssizlik yaranmasın.
+        const byInstrument = {};
+        playData.forEach(item => {
+          if (!byInstrument[item.inst]) byInstrument[item.inst] = [];
+          byInstrument[item.inst].push(item);
+        });
+
+        Object.values(byInstrument).forEach(notes => {
+          notes.sort((a, b) => a.time - b.time);
+          notes.forEach((n, idx) => {
+            const nextTime = idx + 1 < notes.length ? notes[idx + 1].time : n.time + 1.5;
+            let duration = nextTime - n.time;
+            duration = Math.max(0.15, Math.min(duration, 4)); // çox qısa/çox uzun olmasın
+            n.duration = duration;
+          });
+        });
+
+        playData.forEach(({ inst, note, time, duration }) => {
           Tone.Transport.schedule((scheduledTime) => {
-            samplers[inst].triggerAttackRelease(note, "8n", scheduledTime);
+            samplers[inst].triggerAttackRelease(note, duration, scheduledTime);
           }, "+" + time);
           if (time > maxPlayTime) maxPlayTime = time;
         });
