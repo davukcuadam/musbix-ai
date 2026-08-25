@@ -73,6 +73,8 @@ PI:C5-3.0
 XY:C6-3.0
 PI:G4-3.5
 XY:G5-3.5
+
+// (Ab Major)
 CB:Ab1-4.0
 BE:Ab1-4.0
 OR:Ab2-4.0
@@ -103,6 +105,8 @@ PI:Ab4-7.0
 XY:Ab5-7.0
 PI:Eb4-7.5
 XY:Eb5-7.5
+
+// (F Minor)
 CB:F1-8.0
 BE:F1-8.0
 OR:F2-8.0
@@ -133,6 +137,8 @@ PI:F4-11.0
 XY:F5-11.0
 PI:C4-11.5
 XY:C5-11.5
+
+// (G Major)
 CB:G1-12.0
 BE:G1-12.0
 OR:G2-12.0
@@ -163,6 +169,8 @@ PI:G4-15.0
 XY:G5-15.0
 PI:D4-15.5
 XY:D5-15.5
+
+// --- BÖLÜM 2: NEFESLİLERİN KATILIMI (16 - 32) ---
 CB:C2-16.0
 BE:C2-16.0
 OR:C3-16.0
@@ -193,6 +201,7 @@ PI:C5-19.0
 FL:C6-19.0
 PI:G4-19.5
 FL:G5-19.5
+
 CB:Ab1-20.0
 BE:Ab1-20.0
 OR:Ab2-20.0
@@ -223,6 +232,7 @@ PI:Ab4-23.0
 FL:Ab5-23.0
 PI:Eb4-23.5
 FL:Eb5-23.5
+
 CB:F1-24.0
 BE:F1-24.0
 OR:F2-24.0
@@ -253,6 +263,7 @@ PI:F4-27.0
 FL:F5-27.0
 PI:C4-27.5
 FL:C5-27.5
+
 CB:G1-28.0
 BE:G1-28.0
 OR:G2-28.0
@@ -283,6 +294,8 @@ PI:G4-31.0
 FL:G5-31.0
 PI:D4-31.5
 FL:D5-31.5
+
+// --- BÖLÜM 3: TAM ORKESTRA (MAKSİMUM GÜÇ) (32 - 64) ---
 CB:C2-32.0
 BE:C2-32.0
 OR:C3-32.0
@@ -315,6 +328,7 @@ PI:C5-35.0
 XY:C6-35.0
 PI:G4-35.5
 XY:G5-35.5
+
 CB:Ab1-36.0
 BE:Ab1-36.0
 OR:Ab2-36.0
@@ -347,6 +361,7 @@ PI:Ab4-39.0
 XY:Ab5-39.0
 PI:Eb4-39.5
 XY:Eb5-39.5
+
 CB:F1-40.0
 BE:F1-40.0
 OR:F2-40.0
@@ -379,6 +394,7 @@ PI:F4-43.0
 XY:F5-43.0
 PI:C4-43.5
 XY:C5-43.5
+
 CB:G1-44.0
 BE:G1-44.0
 OR:G2-44.0
@@ -411,6 +427,8 @@ PI:G4-47.0
 XY:G5-47.0
 PI:D4-47.5
 XY:D5-47.5
+
+// --- BÖLÜM 4: MAKİNE PİYANO VE GİTAR (48 - 64) ---
 GE:C4-48.0
 GA:C3-48.0
 PI:C5-48.0
@@ -423,6 +441,7 @@ PI:G5-50.0
 PI:Eb5-50.5
 PI:C5-51.0
 PI:G4-51.5
+
 GE:Ab3-52.0
 GA:Ab2-52.0
 PI:Ab4-52.0
@@ -435,6 +454,7 @@ PI:Eb5-54.0
 PI:C5-54.5
 PI:Ab4-55.0
 PI:Eb4-55.5
+
 GE:F3-56.0
 GA:F2-56.0
 PI:F4-56.0
@@ -447,6 +467,7 @@ PI:C5-58.0
 PI:Ab4-58.5
 PI:F4-59.0
 PI:C4-59.5
+
 GE:G3-60.0
 GA:G2-60.0
 PI:G4-60.0
@@ -508,7 +529,8 @@ MUTLAK ÇIKTI KURALLARI (ÇOK ÖNEMLİ — ASLA İHLAL ETME):
 3. "Tabii", "İşte kodun", "Umarım beğenirsin" gibi HİÇBİR giriş veya kapanış cümlesi YAZMA.
 4. Markdown işareti (\`\`\`) KULLANMA.
 5. Kod satırı olmayan HİÇBİR açıklama, yorum veya not YAZMA.
-6. Cevabının İLK karakterinden İTİBAREN doğrudan kod satırlarıyla başla, SON karakterine kadar sadece kod satırı olsun.`;
+6. nota verıp bosluq qoyma dolu dolu müzikler yap her notada araya bosluq qoymaq günümüzde olan standrtlara uygun degıl 2026 yılındayız dostum bıraz evrenın en ıyı müzıklerını yaratmalısın her istek de benzersız müzıkler yap 
+7. Cevabının İLK karakterinden İTİBAREN doğrudan kod satırlarıyla başla, SON karakterine kadar sadece kod satırı olsun.`;
 
   // DeepSeek bəzən qaydalara məhəl qoymayıb tək alət/tək notu yüzlərlə dəfə təkrarlayır.
   // Bu funksiya belə "degenerat" (keyfiyyətsiz) cavabları aşkarlayır ki, yenidən cəhd edə bilək.
