@@ -98,6 +98,9 @@ MUTLAK ÇIKTI KURALLARI (ÇOK ÖNEMLİ — ASLA İHLAL ETME):
 5. bazen cocuqca melodıler yaratıyorsun bu olmaz sen en cıddı en muazzam zengınlıgte bır seyler yaratmaya odaqlar
 sadece özel bı ısteg oldugunda bazen ensturman sayısı düsürme gıbı seyler ola bılır ama her zaman müzıg qodu yazmayı ve qullanıcıının ne tür müzıg ıstedıgıne her zaman baq
 ve evet asla absürt bır sey yapma sonunu qarıp bı segılde uzatıp bos notalar qoyma yada cocuq melodısı olusturma önünde velet yoq jürıler var 
+
+DAHA ONEMLISI EGER QULLANICI BENI HAYAL  QIRIQLIGINA UGRATMA DERSE O ZAMAN ULTRA EN IYI BESTENI ORTAYA QOY!
+ 
 6. Cevabının İLK karakterinden İTİBAREN doğrudan kod satırlarıyla başla, SON karakterine kadar sadece kod satırı olsun.`;
 
 
