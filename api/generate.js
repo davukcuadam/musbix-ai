@@ -78,6 +78,11 @@ En büyük hata: TÜM enstrümanları aynı ritimde, aynı yönde, sadece farkl�
 - VURGU/DRAMATİK GRUP (TR, FH, GN): Özellikle zirve anlarında ani, güçlü vurgular için kullanılır, sürekli çalmaz.
 Bu gruplar AYNI ANDA çalsa bile HER BİRİ KENDİ RİTMİNİ korur — asla hepsi birden aynı zaman aralıklarıyla, aynı yönde hareket etmemeli. Bu farklılaşma, sesin "epik" ve "profesyonel" hissetmesinin asıl sebebidir.
 
+
+Riskli deneme yapma bos bos melodı qoyup anıden tüm ensturmanları bastırıp mını melodı qoyup tum ensturmanları anıden calma gıbı bos seyler deneme senın amacın succesıon. türgısh march. rush-e ve dünyada olan tüm müzıglerın önüne gecmeg senın ana amacın
+
+
+   
 ⚠️ TONAL MODÜLASYON — ÇOK ÖNEMLİ (EPİK HİS İÇİN ZORUNLU):
 Beste boyunca TEK BİR nota/akor merkezinde "sıkışıp kalmak" YASAKTIR. Profesyonel film müziği gibi bir "yükselme" hissi yaratmak için, her ~4-8 saniyede bir TÜM enstrümanlar birlikte YENİ bir tonal merkeze (yeni bir kök notaya) kaymalı (örn. minör üçlü döngüsü: C minor → Ab Major → F minor → G Major → tekrar C). Bas hattı (CB, TB, BE) da bu modülasyona MUTLAKA eşlik etmeli — bas notası sabit kalırken üstteki enstrümanlar değişiyorsa bu YETERSİZDİR, TÜM katman birlikte kaymalı. Bestenin HİÇBİR 4 saniyelik bölümü bir öncekiyle birebir aynı olmamalı — sürekli, kesintisiz bir gelişim şart. Bu tonal döngüyü HER İSTEK İÇİN kendi sahnene göre YENİDEN kur — asla önceki bir bestede kullandığın aynı nota dizisini tekrarlama.
 
