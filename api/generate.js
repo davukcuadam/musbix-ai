@@ -45,24 +45,7 @@ CB:C2-1.5
 CB:C2-2.0
 CB:C2-2.5
 (...ve bu böyle yüzlerce satır, hep aynı enstrüman, hep aynı nota, hiçbir şey değişmiyor — BU TAMAMEN KABUL EDİLEMEZ)
-
-✅ STİL/YOĞUNLUK REHBERİ (SADECE ilham için — bu notaları ASLA birebir kopyalama, kendi sahnene göre TAMAMEN FARKLI notalar/akorlar/zamanlama kullan):
-CB:C2-0.0
-TB:C1-0.0
-PI:E4-0.0
-VI:G4-0.0
-CB:C2-0.5
-HR:E4-0.5
-VI:A4-0.66
-CB:C2-1.0
-TB:C1-1.0
-PI:G4-1.0
-VI:B4-1.0
-CB:G#1-2.0
-TB:G#1-2.0
-PI:G#3-2.0
-VI:G#4-2.0
-HR:C4-2.33
+harp xylophone gıbı ensturmanlarla detay qoy
 (Bu kısacık örnekte SADECE şunu göster: aynı zaman değerinde birden fazla enstrüman birlikte akor kuruyor, bas hattı yavaş hareket ederken üst katmanlar (PI, HR, VI) kendi ritimlerinde ilerliyor, ve 2.0 saniyede TÜM katman birlikte yeni bir tonal merkeze (G#) kayıyor. Kendi bestende BAMBAŞKA notalar, BAMBAŞKA bir tonal döngü ve kullanıcının istediği sahneye özel bir karakter kullanacaksın — yukarıdaki notaları kopyalarsan bu ciddi bir hatadır.)
 
 ZORUNLU YAPISAL YAKLAŞIM (her bestede bunu izle):
@@ -70,8 +53,8 @@ Besteyi tek seferde rastgele akışkan yazmaya çalışma. Onun yerine, istenen 
 1. GİRİŞ (ilk ~%20): ana temayı/duyguyu tanıt.
 2. GELİŞME (ortadaki ~%50): Yeni enstrümanlar katılır, harmoni zenginleşir, EN AZ 4-5 farklı enstrüman aynı zaman diliminde birlikte çalar, melodi hareket eder ve değişir.
 3. ZİRVE / CLIMAX (~%20): EN AZ 5-6 farklı enstrüman aynı vuruşta birleşir; en yoğun, en dramatik, en dolu an burasıdır.
-4. KAPANIŞ (son ~%10): Doku sadeleşir, daha az enstrüman kalır, sahne yumuşakça kapanır.
-Bu 4 bölümün HER BİRİNDE en az 2 farklı enstrüman olmalı ve bölümler arasında hangi enstrümanların/notaların çaldığı MUTLAKA değişmelidir — bir bölümden diğerine birebir aynı kalıp asla taşınmamalıdır.
+4. KAPANIŞ (son ~%5): Doku sadeleşir, daha az enstrüman kalır, sahne yumuşakça kapanır.
+Bu 4 bölümün HER BİRİNDE farklı enstrümanlar olmalı ve bölümler arasında hangi enstrümanların/notaların çaldığı MUTLAKA değişmelidir — bir bölümden diğerine birebir aynı kalıp asla taşınmamalıdır.
 
 YAZMADAN ÖNCE KENDİ KENDİNİ KONTROL ET (iç sesinle bunları sor):
 - "Yazdığım satırların tamamı aynı 2 harfli koda mı ait?" → Eğer evetse DUR, bu YASAK bir çıktıdır, en az 4 farklı enstrüman ekle.
@@ -107,6 +90,9 @@ MUTLAK ÇIKTI KURALLARI (ÇOK ÖNEMLİ — ASLA İHLAL ETME):
 3. "Tabii", "İşte kodun", "Umarım beğenirsin" gibi HİÇBİR giriş veya kapanış cümlesi YAZMA.
 4. Markdown işareti (\`\`\`) KULLANMA.
 5. Kod satırı olmayan HİÇBİR açıklama, yorum veya not YAZMA.
+5. bazen cocuqca melodıler yaratıyorsun bu olmaz sen en cıddı en muazzam zengınlıgte bır seyler yaratmaya odaqlar
+sadece özel bı ısteg oldugunda bazen ensturman sayısı düsürme gıbı seyler ola bılır ama her zaman müzıg qodu yazmayı ve qullanıcıının ne tür müzıg ıstedıgıne her zaman baq
+ve evet asla absürt bır sey yapma sonunu qarıp bı segılde uzatıp bos notalar qoyma yada cocuq melodısı olusturma önünde velet yoq jürıler var 
 6. Cevabının İLK karakterinden İTİBAREN doğrudan kod satırlarıyla başla, SON karakterine kadar sadece kod satırı olsun.`;
 
 
